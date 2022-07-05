@@ -69,7 +69,7 @@ class PostUpdateView(LoginRequiredMixin, UserPassesTestMixin, SuccessMessageMixi
 class PostDeleteView(LoginRequiredMixin, UserPassesTestMixin, SuccessMessageMixin, DeleteView):
     model = Post
 
-    success_message = 'Post was deleted succsesfuly'
+    success_message = 'Post was deleted successfully'
 
     success_url = '/'
 
