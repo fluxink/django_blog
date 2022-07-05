@@ -8,7 +8,7 @@
                     <a class="mr-2 text-decoration-none" href="#">{{ post.author }}</a>
                     <small class="text-muted">{{ post.date_posted|date:"j F, Y" }}</small>
                 </div>
-                <h2><a class="article-title text-decoration-none" href="#">{{ post.title }}</a></h2>
+                <h2><a class="article-title text-decoration-none" href="{% url 'post-detail' post.id %}">{{ post.title }}</a></h2>
                 <p class="article-content">{{ post.content }}</p>
             </div>
         </article>
