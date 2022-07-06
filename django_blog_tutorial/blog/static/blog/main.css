@@ -53,7 +53,7 @@ a.article-title:hover {
   height: 65px;
   width: 65px;
   margin-right: 16px;
-  object-fit: contain;
+  object-fit: cover;
 }
 
 .article-metadata {
@@ -78,9 +78,18 @@ a.article-title:hover {
   width: 125px;
   margin-right: 20px;
   margin-bottom: 16px;
-  object-fit: contain;
+  object-fit: cover;
 }
 
 .account-heading {
   font-size: 2.5rem;
+}
+
+.vote {
+  --bs-btn-padding-y: .25rem !important;
+  --bs-btn-padding-x: .5rem !important;
+  --bs-btn-font-size: .75rem !important;
+  --bs-btn-bg: rgb(167, 167, 167) !important;
+  --bs-btn-border-color: rgb(167, 167, 167) !important;
+  min-width: 26px !important;
 }

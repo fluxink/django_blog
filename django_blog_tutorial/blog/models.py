@@ -15,4 +15,22 @@ class Post(models.Model):
 
     def get_absolute_url(self):
         return reverse('post-detail', kwargs={'pk': self.pk})
-    
+
+
+class PostRating(models.Model):
+    post = models.ForeignKey(Post, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    action = models.CharField(max_length=20)
+
+    def get_rating(self):
+        likes = PostRating.objects.filter(post=self.post, action='like').count()
+        dislikes = PostRating.objects.filter(post=self.post, action='dislike').count()
+        return likes - dislikes
+
+    def __str__(self):
+        return f'{self.user} {self.action} {self.post}'
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(fields=['user', 'post'], name='unique_user_post_combination')
+        ]
