@@ -26,20 +26,28 @@ let vote = {
 const csrftoken = getCookie('csrftoken')
 
 async function send_request(method, request_url, body = null){
-    const response = await fetch(request_url, {
-        method: method,
-        body: JSON.stringify(body),
-        headers: {
+    if (method == 'POST'){
+        const response = await fetch(request_url, {
+            method: method,
+            body: JSON.stringify(body),
+            headers: {
+                'Content-Type': 'application/json;charset=utf-8',
+                'X-CSRFToken': csrftoken
+            }
+        })
+    }
+    if (method == 'GET'){
+        let head = {
             'Content-Type': 'application/json;charset=utf-8',
             'X-CSRFToken': csrftoken
         }
-    })
-    if (response.ok) {
-        return response.json()
+        head['post-id'] = body['post_id']
+        return await fetch(request_url, {
+            method: method,
+            headers: head
+        })
     }
-    const error = await response.json()
-    console.log('Error POST')
-    
+
 }
 
 let url = '/rate-post/'
@@ -51,7 +59,11 @@ async function test(element){
         post_id: element.getAttribute('post_id'),
         action: element.getAttribute('action')
     }
-    send_request('POST', url, data)
+    await send_request('POST', url, data)
+    let score_elem = document.getElementById(element.getAttribute('post_id') + '_score')
+    
+    let post_score = await send_request('GET', url, data)
+    score_elem.innerHTML = post_score.headers.get('score')
 }
 
 for (let elem of vote_list){

@@ -1,24 +1,19 @@
 {% extends "blog/base.html" %}
-
 {% block content %}
     {% for post in posts %}
         <article class="media content-section">
             <img class="rounded-circle article-img" src="{{ post.author.profile.image.url }}" alt="">
 
-            <input type="radio" class="btn-check" name="post-option{{ post.id }}" id="like{{ post.id }}" autocomplete="off" 
-            {% for post_r in post_user_vote_list %}
-            {% if post_r.post.id == post.id and post_r.action == 'like' %}checked{% endif %}
-            {% endfor %}>
+            <input type="radio" class="btn-check" name="post-option{{ post.id }}" id="like{{ post.id }}" autocomplete="off" disabled>
+
             <label class="btn btn-success vote" action="like" post_id="{{ post.id }}" for="like{{ post.id }}">+</label>
             {% if post.postrating_set.first %}
                 <span class="score" id="{{ post.id }}_score">{{ post.postrating_set.first.get_rating }}</span>
             {% else %}
                 <span class="score" id="{{ post.id }}_score">0</span>
             {% endif %}
-            <input type="radio" class="btn-check" name="post-option{{ post.id }}" id="dislike{{ post.id }}" autocomplete="off"
-            {% for post_r in post_user_vote_list %}
-            {% if post_r.post.id == post.id and post_r.action == 'dislike' %}checked{% endif %}
-            {% endfor %}>
+            <input type="radio" class="btn-check" name="post-option{{ post.id }}" id="dislike{{ post.id }}" autocomplete="off" disabled>
+
             <label class="btn btn-danger vote" action="dislike" post_id="{{ post.id }}" for="dislike{{ post.id }}">-</label>
             <div class="media-body">
                 <div class="article-metadata">

@@ -30,15 +30,27 @@ class PostRateView(LoginRequiredMixin, SingleObjectMixin, View):
 
 class PostListView(ListView):
     model = Post
-    template_name = 'blog/home.html' # <app>/<model>_<viewtype>.html as default
+    # template_name = 'blog/home.html' # <app>/<model>_<viewtype>.html as default
     context_object_name = 'posts' # <model>_list as default
     ordering = ['-date_posted']
     paginate_by = 5
 
+    def get_template_names(self):
+        if self.request.user.is_authenticated:
+            return 'blog/home.html'
+        else:
+            return 'blog/home_anonim.html'
+
     def get_context_data(self, **kwargs):
         context = super(PostListView, self).get_context_data(**kwargs)
+        if self.request.user.is_authenticated:
+            post_user_vote_list = PostRating.objects.filter(user=self.request.user)
+        else:
+            post_user_vote_list = None
+
         context.update({
-            'posts_rating_list': PostRating.objects.all()
+            'posts_rating_list': PostRating.objects.all(),
+            'post_user_vote_list': post_user_vote_list
         })
         return context
 
@@ -56,10 +68,16 @@ def post_rate(request):
         else:
             PostRating.objects.create(user=user, post=post, action=action)
         print('Yay')
-        return HttpResponse(request, {'content': 'Yay'})
+        return HttpResponse(request, content_type='text/plain', headers={'content': 'Yay'})
+    if request.method == 'GET':
+        post_id = request.headers['post-id']
+        print(post_id)
+        post = Post.objects.get(id=post_id)
+        score = PostRating.objects.filter(post=post).first().get_rating()
+        return HttpResponse(request, content_type='text/plain', headers={'score': score})
     else:
         print('Foo')
-        return HttpResponse(request, {'content': 'Foo'})
+        return HttpResponse(request, content_type='text/plain', headers={'content': 'Foo'})
 
 
 class UserPostListView(ListView):
