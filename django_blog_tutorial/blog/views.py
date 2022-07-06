@@ -30,16 +30,10 @@ class PostRateView(LoginRequiredMixin, SingleObjectMixin, View):
 
 class PostListView(ListView):
     model = Post
-    # template_name = 'blog/home.html' # <app>/<model>_<viewtype>.html as default
+    template_name = 'blog/home.html' # <app>/<model>_<viewtype>.html as default
     context_object_name = 'posts' # <model>_list as default
     ordering = ['-date_posted']
     paginate_by = 5
-
-    def get_template_names(self):
-        if self.request.user.is_authenticated:
-            return 'blog/home.html'
-        else:
-            return 'blog/home_anonim.html'
 
     def get_context_data(self, **kwargs):
         context = super(PostListView, self).get_context_data(**kwargs)
