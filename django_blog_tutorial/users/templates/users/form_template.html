@@ -1,0 +1,14 @@
+{% load crispy_forms_utils %}
+
+{% specialspaceless %}
+{% if form_tag %}<form {{ flat_attrs }} method="{{ form_method|upper }}" class="d-grid gap-3" >{% endif %}
+    {% if form_method|lower == 'post' and not disable_csrf %}
+        {% csrf_token %}
+    {% endif %}
+
+    {% include "bootstrap5/display_form.html" %}
+
+    {% include "bootstrap5/inputs.html" %}
+    <button class="w-100 btn btn-lg btn-primary" type="submit">Sign in</button>
+{% if form_tag %}</form>{% endif %}
+{% endspecialspaceless %}

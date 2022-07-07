@@ -2,7 +2,14 @@ import os
 from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from .forms import UserRegisterForm, ProfileUpdateForm, UserUpdateForm
+from django.contrib.auth.views import LoginView
+from .forms import UserRegisterForm, ProfileUpdateForm, UserUpdateForm, MyAuthenticationForm
+
+
+class MyLoginView(LoginView):
+
+    authentication_form = MyAuthenticationForm
+
 
 def register(request):
     if request.method == 'POST':
@@ -14,7 +21,7 @@ def register(request):
             return redirect('login')
     else:
         form = UserRegisterForm()
-    return render(request, 'users/register.html', { 'form': form })
+    return render(request, 'users/register.html', { 'form': form, 'title': 'Create Account' })
 
 
 @login_required

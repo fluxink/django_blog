@@ -93,3 +93,7 @@ a.article-title:hover {
   --bs-btn-border-color: rgb(167, 167, 167) !important;
   min-width: 26px !important;
 }
+
+.form-signin {
+  max-width: 350px;
+}
