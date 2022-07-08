@@ -24,15 +24,73 @@
     </div>
 {% endif %}
 {% if post_comments %}
-    {% for comment in post_comments %}
-        <div>
-            <div>
-                <label for="">{{ comment.user }}</label>
-                <span>{{ comment.date }}</span>
-                <span>{{ comment.score }}</span>
+    <div class="comment-section">
+        {% for comment in post_comments %}
+        <div class="card mb-3">
+            <div class="card-header d-flex align-items-center">
+                <img class="rounded-circle border comment-img me-2" src="{{ comment.user.profile.image.url }}" alt="">
+                <label class="me-2">{{ comment.user }}</label>
+                <span class="me-auto text-muted time-small">{{ comment.date }}</span>
+                <div class="align-self-end">
+                    <input type="radio" class="btn-check" name="comment-option{{ comment.id }}" id="like{{ comment.id }}" autocomplete="off"
+                        {% if user.is_authenticated %}
+                            {% for comment_r in comment_user_vote_list %}
+                            {{ comment_r.action }}
+                                {% if comment_r.comment.id == comment.id and comment_r.action == 'like' %}checked{% endif %}
+                            {% endfor %}
+                        {% endif %}>
+                        <label class="btn btn-success comment-vote" action="like" comment-id="{{ comment.id }}" for="like{{ comment.id }}">+</label>
+                        {% if comment.postcommentrating_set.first %}
+                            <span class="score" id="{{ comment.id }}-score">{{ comment.postcommentrating_set.first.get_rating }}</span>
+                        {% else %}
+                            <span class="score" id="{{ comment.id }}-score">0</span>
+                        {% endif %}
+                        <input type="radio" class="btn-check" name="comment-option{{ comment.id }}" id="dislike{{ comment.id }}" autocomplete="off"
+                        {% if user.is_authenticated %}
+                            {% for comment_r in comment_user_vote_list %}
+                                {% if comment_r.comment.id == comment.id and comment_r.action == 'dislike' %}checked{% endif %}
+                            {% endfor %}
+                        {% endif %}>
+                        <label class="btn btn-danger comment-vote" action="dislike" comment-id="{{ comment.id }}" for="dislike{{ comment.id }}">-</label>
+                </div>
             </div>
-            <p>{{ comment.content }}</p>
+            <div class="card-body">
+                {{ comment.content }}
+            </div>
         </div>
-    {% endfor %}
+        {% endfor %}
+    </div>
+    {% if comments_count > 2 %}
+    <nav aria-label="Page navigation example">
+        <ul class="pagination">
+        {% if post_comments.has_previous %}
+            <li class="page-item"><a class="page-link" href="?page=1">First</a></li>
+            <li class="page-item">
+                <a class="page-link" href="?page={{ post_comments.previous_page_number }}" aria-label="Previous">
+                  <span aria-hidden="true">&laquo;</span>
+                </a>
+              </li>
+        {% endif %}
+
+        {% for num in post_comments.paginator.page_range %}
+            {% if post_comments.number == num %}
+            <li class="page-item active"><a class="page-link" href="?page={{ num }}">{{ num }}</a></li>
+            {% elif num > post_comments.number|add:'-3' and num < post_comments.number|add:'3'%}
+            <li class="page-item"><a class="page-link" href="?page={{ num }}">{{ num }}</a></li>
+            {% endif %}
+        {% endfor %}
+
+        {% if post_comments.has_next %}
+            <li class="page-item">
+                <a class="page-link" href="?page={{ post_comments.next_page_number }}" aria-label="Next">
+                  <span aria-hidden="true">&raquo;</span>
+                </a>
+              </li>
+            <li class="page-item"><a class="page-link" href="?page={{ post_comments.paginator.num_pages }}">Last</a></li>
+        {% endif %}
+        </ul>
+    </nav>
+    {% endif %}
+    
 {% endif %}
 {% endblock content %}

@@ -55,7 +55,26 @@ class PostComment(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     content = models.CharField(max_length=250)
     date = models.DateTimeField(auto_now_add=True)
-    score = models.IntegerField(default=0)
+    # score = models.IntegerField(default=0)
 
     def __str__(self):
         return f'{self.user} comment "{self.post}"'
+
+
+class PostCommentRating(models.Model):
+    comment = models.ForeignKey(PostComment, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    action = models.CharField(max_length=20)
+
+    def get_rating(self):
+        likes = PostCommentRating.objects.filter(comment=self.comment, action='like').count()
+        dislikes = PostCommentRating.objects.filter(comment=self.comment, action='dislike').count()
+        return likes - dislikes
+
+    def __str__(self):
+        return f'{self.user} {self.action} comment-id: {self.comment.id}'
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(fields=['user', 'comment'], name='unique_user_comment_combination')
+        ]

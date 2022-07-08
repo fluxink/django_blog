@@ -10,12 +10,11 @@ class CommentCreateForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super(CommentCreateForm, self).__init__(*args, **kwargs)
 
-
         self.helper = FormHelper(self)
-        # self.helper.template = 'blog/form_template_comment.html'
+        self.helper.template = 'blog/form_template_comment.html'
         self.helper.layout = Layout(
-            Field('content', template='users/field_text.html'),
-            Submit('submit', 'submit')
+            Field('content', template='blog/field_comment.html'),
+            Submit('submit', 'Send')
         )
 
 

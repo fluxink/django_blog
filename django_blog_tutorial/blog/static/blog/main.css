@@ -106,3 +106,30 @@ a.article-title:hover {
 .form-signin {
   max-width: 350px;
 }
+
+.comment-img {
+  height: 28px;
+  width: 28px;
+  object-fit: cover;
+}
+
+.comment {
+  background: #ffffff;
+  padding: 5px 16px;
+  border: 1px solid #dddddd;
+  border-radius: 3px;
+  margin-bottom: 10px;
+}
+
+.comment-vote {
+  --bs-btn-padding-y: .25rem !important;
+  --bs-btn-padding-x: .5rem !important;
+  --bs-btn-font-size: .75rem !important;
+  --bs-btn-bg: rgb(167, 167, 167) !important;
+  --bs-btn-border-color: rgb(167, 167, 167) !important;
+  min-width: 26px !important;
+}
+
+.time-small {
+  font-size: small;
+}

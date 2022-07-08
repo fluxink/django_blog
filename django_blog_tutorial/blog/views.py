@@ -7,7 +7,8 @@ from django.contrib.auth.models import User
 from django.contrib.messages.views import SuccessMessageMixin
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.contrib.auth.decorators import login_required
-from .models import Post, PostRating, PostFav, PostComment
+from django.core.paginator import Paginator
+from .models import Post, PostCommentRating, PostRating, PostFav, PostComment
 from .forms import CommentCreateForm
 import json
 
@@ -104,6 +105,29 @@ class UserPostListView(ListView):
         return Post.objects.filter(author=user).order_by('-date_posted')
 
 
+# class PostCommentListView(ListView):
+#     model = PostComment
+#     template_name = 'blog/post_detail_comment_list.html'
+#     context_object_name = 'comments'
+#     ordering = ['-date']
+#     paginate_by = 7
+
+#     def get_context_data(self, **kwargs):
+#         context = super().get_context_data(**kwargs)
+
+#         if self.request.user.is_authenticated:
+#             try:
+#                 # comment_list = PostCommentRating.objects.filter(user=self.request.user, post=self.get_object())
+#                 comment_list = PostCommentRating.objects.filter(comment__post=Post.objects.get(pk=self.kwargs.get('pk')), user=self.request.user)
+#             except:
+#                 comment_list = None
+
+#             context.update({
+#                 'form': CommentCreateForm(),
+#                 'comment_user_vote_list': comment_list
+#             })
+
+
 class PostDetailView(DetailView):
     model = Post
 
@@ -111,16 +135,31 @@ class PostDetailView(DetailView):
         context = super().get_context_data(**kwargs)
 
         if self.request.user.is_authenticated:
+            try:
+                # comment_list = PostCommentRating.objects.filter(user=self.request.user, post=self.get_object())
+                comment_list = PostCommentRating.objects.filter(comment__post=self.get_object(), user=self.request.user)
+            except:
+                comment_list = None
+
             context.update({
-                'form': CommentCreateForm()
+                'form': CommentCreateForm(),
+                'comment_user_vote_list': comment_list
             })
 
         try:
-            comments = PostComment.objects.filter(post=self.get_object())
+            comments = PostComment.objects.filter(post=self.get_object()).order_by('-date')
+            comments_count = comments.count()
+            paginator = Paginator(comments, 2)
+            page_number = self.request.GET.get('page')
+            page_comments = paginator.get_page(page_number)
+
         except:
-            comments = None
+            page_comments = None
+            comments_count = None
+
         context.update({
-            'post_comments': comments
+            'post_comments': page_comments,
+            'comments_count': comments_count
         })
         return context
 
@@ -133,6 +172,21 @@ class PostDetailView(DetailView):
                 comment_form.instance.post = self.get_object()
                 comment_form.save()
                 return self.render_to_response(context=self.get_context_data())
+            json_data = json.loads(request.body)
+            if json_data['comment-id'] and json_data['comment-action']:
+                comment = PostComment.objects.get(id=json_data['comment-id'])
+                action = json_data['comment-action']
+                
+                comment_object = PostCommentRating.objects.update_or_create(comment=comment, user=request.user, defaults={'action': action})
+
+                # if PostCommentRating.objects.filter(comment=comment, user=request.user).exists():
+                #    comment_object = PostCommentRating.objects.filter(comment=comment, user=request.user)
+                #    comment_object.update(action=action)
+                # else:
+                #    comment_object = PostCommentRating.objects.create(comment=comment, user=request.user, action=action)
+                #    comment_object.save()
+
+                return HttpResponse(request, content_type='text/plain', headers={'comment-score': comment_object[0].get_rating()})
 
 
 class PostCreateView(LoginRequiredMixin, SuccessMessageMixin, CreateView):

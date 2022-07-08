@@ -12,7 +12,7 @@ const csrftoken = getCookie('csrftoken')
 
 async function send_vote_request(method, request_url, body = null){
     if (method == 'POST'){
-        const response = await fetch(request_url, {
+        return await fetch(request_url, {
             method: method,
             body: JSON.stringify(body),
             headers: {
@@ -32,6 +32,16 @@ async function send_vote_request(method, request_url, body = null){
             headers: head
         })
     }
+}
+
+async function comment_vote(element){
+    let data = {
+        'comment-id': element.getAttribute('comment-id'),
+        'comment-action': element.getAttribute('action')
+    }
+    response = await send_vote_request('POST', window.location.href, data)
+    let score_elem = document.getElementById(data['comment-id'] + '-score')
+    score_elem.innerHTML = response.headers.get('comment-score')
 }
 
 async function post_vote(element){
@@ -70,6 +80,7 @@ const vote_url = '/rate-post/'
 const fav_url = '/fav-post/'
 const vote_list = document.getElementsByClassName('vote')
 const fav_list = document.getElementsByClassName('fav')
+const comment_vote_list = document.getElementsByClassName('comment-vote')
 
 // add event for each vote button
 for (let elem of vote_list){
@@ -86,4 +97,9 @@ for (let elem of fav_list){
             if_user_auth(post_fav,elem, 'False')
         }
     } )
+}
+for (let elem of comment_vote_list){
+    elem.addEventListener('click', event => {
+        if_user_auth(comment_vote, elem)
+    })
 }
