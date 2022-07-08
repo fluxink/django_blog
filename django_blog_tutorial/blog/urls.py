@@ -17,6 +17,7 @@ urlpatterns = [
 
     path('post/<slug:post>/<slug:action>/', PostRateView.as_view(), name='post-rate'),
     path('rate-post/', views.post_rate, name='post-rate'),
+    path('fav-post/', views.post_fav, name='post-fav'),
 
     path('post/new/', PostCreateView.as_view(), name='post-create'),
     path('post/<int:pk>/update/', PostUpdateView.as_view(), name='post-update'),

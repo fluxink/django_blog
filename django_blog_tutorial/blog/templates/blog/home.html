@@ -2,10 +2,12 @@
 
 {% block content %}
     {% for post in posts %}
-        <article class="media content-section">
+        <article class="media content-section shadow">
             <div class="d-flex">
                 <img class="rounded-circle article-img me-auto" src="{{ post.author.profile.image.url }}" alt="">
                 <div class="align-self-end">
+                    <input type="checkbox" class="btn-check fav" id="btn-fav-{{ post.id }}" post_id="{{ post.id }}" autocomplete="off" {% if post_user_fav_list and post.id in post_user_fav_list %}checked{% endif %}>
+                    <label class="btn btn-primary fav" for="btn-fav-{{ post.id }}">*</label>
                     <input type="radio" class="btn-check" name="post-option{{ post.id }}" id="like{{ post.id }}" autocomplete="off"
                     {% if user.is_authenticated %}
                         {% for post_r in post_user_vote_list %}

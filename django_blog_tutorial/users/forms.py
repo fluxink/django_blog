@@ -12,14 +12,10 @@ class MyAuthenticationForm(AuthenticationForm):
     def __init__(self, *args, **kwargs):
         super(MyAuthenticationForm, self).__init__(*args, **kwargs)
         self.helper = FormHelper(self)
-        print(self.helper)
-        # self.helper.form_class = 'form-horizontal'
-        self.helper.template = 'users/form_template.html'
-        # self.helper.field_template = 'users/field.html'
+        self.helper.template = 'users/form_template_login.html'
         self.helper.layout = Layout(
-            Field('username', template='users/field.html'),
-            Field('password', template='users/field.html')
-            # Submit('login', 'Sign in')
+            Field('username', template='users/field_text.html'),
+            Field('password', template='users/field_text.html')
         )
 
 

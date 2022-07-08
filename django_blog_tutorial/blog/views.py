@@ -6,7 +6,7 @@ from django.contrib.auth.models import User
 from django.contrib.messages.views import SuccessMessageMixin
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.contrib.auth.decorators import login_required
-from .models import Post, PostRating
+from .models import Post, PostRating, PostFav, PostComment
 import json
 
 
@@ -39,12 +39,15 @@ class PostListView(ListView):
         context = super(PostListView, self).get_context_data(**kwargs)
         if self.request.user.is_authenticated:
             post_user_vote_list = PostRating.objects.filter(user=self.request.user)
+            post_user_fav_list = PostFav.objects.filter(user=self.request.user, fav=1).values_list('post', flat=True)
         else:
             post_user_vote_list = None
+            post_user_fav_list = None
 
         context.update({
             'posts_rating_list': PostRating.objects.all(),
-            'post_user_vote_list': post_user_vote_list
+            'post_user_vote_list': post_user_vote_list,
+            'post_user_fav_list': post_user_fav_list
         })
         return context
 
@@ -61,17 +64,30 @@ def post_rate(request):
             PostRating.objects.filter(user=user, post=post).update(action=action)
         else:
             PostRating.objects.create(user=user, post=post, action=action)
-        print('Yay')
         return HttpResponse(request, content_type='text/plain', headers={'content': 'Yay'})
     if request.method == 'GET':
         post_id = request.headers['post-id']
-        print(post_id)
         post = Post.objects.get(id=post_id)
         score = PostRating.objects.filter(post=post).first().get_rating()
         return HttpResponse(request, content_type='text/plain', headers={'score': score})
-    else:
-        print('Foo')
-        return HttpResponse(request, content_type='text/plain', headers={'content': 'Foo'})
+
+
+@login_required
+def post_fav(request):
+    if request.method == 'POST':
+        user = request.user
+        json_data = json.loads(request.body)
+        if json_data['fav'] == 'True':
+            fav = 1
+        else: fav = 0
+        post = json_data['post_id']
+        post = Post.objects.get(pk=post)
+        if PostFav.objects.filter(user=user, post=post).exists():
+            PostFav.objects.filter(user=user, post=post).update(fav=fav)
+        else:
+            PostFav.objects.create(user=user, post=post, fav=fav)
+        return HttpResponse(request, content_type='text/plain', headers={'content': 'Yay'})
+
 
 
 class UserPostListView(ListView):
@@ -88,6 +104,17 @@ class UserPostListView(ListView):
 
 class PostDetailView(DetailView):
     model = Post
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        try:
+            comments = PostComment.objects.filter(post=self.get_object())
+        except:
+            comments = None
+        context.update({
+            'post_comments': comments
+        })
+        return context
 
 
 class PostCreateView(LoginRequiredMixin, SuccessMessageMixin, CreateView):

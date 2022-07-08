@@ -94,6 +94,15 @@ a.article-title:hover {
   min-width: 26px !important;
 }
 
+.fav {
+  --bs-btn-padding-y: .25rem !important;
+  --bs-btn-padding-x: .5rem !important;
+  --bs-btn-font-size: .75rem !important;
+  --bs-btn-bg: rgb(167, 167, 167) !important;
+  --bs-btn-border-color: rgb(167, 167, 167) !important;
+  min-width: 26px !important;
+}
+
 .form-signin {
   max-width: 350px;
 }

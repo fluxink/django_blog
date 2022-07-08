@@ -34,3 +34,28 @@ class PostRating(models.Model):
         constraints = [
             models.UniqueConstraint(fields=['user', 'post'], name='unique_user_post_combination')
         ]
+
+
+class PostFav(models.Model):
+    post = models.ForeignKey(Post, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    fav = models.BooleanField()
+
+    def __str__(self):
+        return f'{self.user} fav "{self.post}"'
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(fields=['user', 'post'], name='unique_user_post_combination_fav')
+        ]
+
+
+class PostComment(models.Model):
+    post = models.ForeignKey(Post, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    content = models.CharField(max_length=250)
+    date = models.DateTimeField(auto_now_add=True)
+    score = models.IntegerField(default=0)
+
+    def __str__(self):
+        return f'{self.user} comment "{self.post}"'

@@ -1,6 +1,6 @@
 {% extends 'blog/base.html' %}
 {% block content %}
-<article class="media content-section">
+<article class="media content-section shadow">
     <img class="rounded-circle article-img" src="{{ object.author.profile.image.url }}" alt="">
     <div class="media-body">
         <div class="article-metadata">
@@ -17,4 +17,24 @@
         <p class="article-content">{{ object.content }}</p>
     </div>
 </article>
+{% if user.is_authenticated %}
+    <div>
+        <form action="POST">
+            <input type="text">
+            <input type="submit">
+        </form>
+    </div>
+{% endif %}
+{% if post_comments %}
+    {% for comment in post_comments %}
+        <div>
+            <div>
+                <label for="">{{ comment.user }}</label>
+                <span>{{ comment.date }}</span>
+                <span>{{ comment.score }}</span>
+            </div>
+            <p>{{ comment.content }}</p>
+        </div>
+    {% endfor %}
+{% endif %}
 {% endblock content %}
