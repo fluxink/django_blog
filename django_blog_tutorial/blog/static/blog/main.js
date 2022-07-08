@@ -35,28 +35,55 @@ async function send_vote_request(method, request_url, body = null){
 }
 
 async function post_vote(element){
+    let data = {
+        post_id: element.getAttribute('post_id'),
+        action: element.getAttribute('action')
+    }
+    // send up/down vote
+    await send_vote_request('POST', vote_url, data)
+    let score_elem = document.getElementById(element.getAttribute('post_id') + '_score')
+    // get updated score
+    let post_score = await send_vote_request('GET', vote_url, data)
+    score_elem.innerHTML = post_score.headers.get('score')
+}
+
+async function if_user_auth(func, ...args){
     let is_auth = (document.querySelector('meta[name="usr-auth-check"]').content == 'True')
     if (is_auth){
-        let data = {
-            post_id: element.getAttribute('post_id'),
-            action: element.getAttribute('action')
-        }
-        // send up/down vote
-        await send_vote_request('POST', vote_url, data)
-        let score_elem = document.getElementById(element.getAttribute('post_id') + '_score')
-        // get updated score
-        let post_score = await send_vote_request('GET', vote_url, data)
-        score_elem.innerHTML = post_score.headers.get('score')
+       await func(...args)
     }
-    else {
+    else{
         window.location.href = '/login/'
     }
 }
 
-let vote_url = '/rate-post/'
-let vote_list = document.getElementsByClassName('vote')
+async function post_fav(element, is_favorit){
+    let data = {
+        post_id: element.getAttribute('post_id'),
+        fav: is_favorit
+    }
+    // send fav
+    await send_vote_request('POST', fav_url, data)
+}
+
+const vote_url = '/rate-post/'
+const fav_url = '/fav-post/'
+const vote_list = document.getElementsByClassName('vote')
+const fav_list = document.getElementsByClassName('fav')
 
 // add event for each vote button
 for (let elem of vote_list){
-    elem.addEventListener('click', event => {post_vote(elem)} )
+    elem.addEventListener('click', event => {
+        if_user_auth(post_vote,elem)
+    } )
+}
+for (let elem of fav_list){
+    elem.addEventListener('change', (event) => {
+        if (event.currentTarget.checked){
+            if_user_auth(post_fav,elem, 'True')
+        }
+        else {
+            if_user_auth(post_fav,elem, 'False')
+        }
+    } )
 }
