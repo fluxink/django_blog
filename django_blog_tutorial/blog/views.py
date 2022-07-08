@@ -1,12 +1,14 @@
 from django.http import HttpResponse
 from django.shortcuts import render, get_object_or_404
-from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView, View
+from django.views.generic import ListView, DetailView, View
+from django.views.generic.edit import UpdateView, DeleteView, CreateView
 from django.views.generic.detail import SingleObjectMixin
 from django.contrib.auth.models import User
 from django.contrib.messages.views import SuccessMessageMixin
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.contrib.auth.decorators import login_required
 from .models import Post, PostRating, PostFav, PostComment
+from .forms import CommentCreateForm
 import json
 
 
@@ -107,6 +109,12 @@ class PostDetailView(DetailView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+
+        if self.request.user.is_authenticated:
+            context.update({
+                'form': CommentCreateForm()
+            })
+
         try:
             comments = PostComment.objects.filter(post=self.get_object())
         except:
@@ -115,6 +123,16 @@ class PostDetailView(DetailView):
             'post_comments': comments
         })
         return context
+
+    def post(self, request, *args, **kwargs):
+        if request.user.is_authenticated:
+            comment_form = CommentCreateForm(request.POST)
+            if comment_form.is_valid():
+                self.object = self.get_object()
+                comment_form.instance.user = request.user
+                comment_form.instance.post = self.get_object()
+                comment_form.save()
+                return self.render_to_response(context=self.get_context_data())
 
 
 class PostCreateView(LoginRequiredMixin, SuccessMessageMixin, CreateView):
