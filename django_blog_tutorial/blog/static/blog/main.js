@@ -63,7 +63,7 @@ async function if_user_auth(func, ...args){
        await func(...args)
     }
     else{
-        window.location.href = '/login/'
+        window.location.href = '/login/?next=' + window.location.pathname
     }
 }
 
