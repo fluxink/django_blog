@@ -1,3 +1,5 @@
+@import url("https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.3/font/bootstrap-icons.css");
+
 body {
     background: #fafafa;
     color: #333333;
@@ -52,7 +54,6 @@ a.article-title:hover {
 .article-img {
   height: 65px;
   width: 65px;
-  margin-right: 16px;
   object-fit: cover;
 }
 
@@ -85,22 +86,41 @@ a.article-title:hover {
   font-size: 2.5rem;
 }
 
-.vote {
+/* .vote {
   --bs-btn-padding-y: .25rem !important;
   --bs-btn-padding-x: .5rem !important;
   --bs-btn-font-size: .75rem !important;
   --bs-btn-bg: rgb(167, 167, 167) !important;
   --bs-btn-border-color: rgb(167, 167, 167) !important;
   min-width: 26px !important;
-}
+  padding: 0px !important;
+} */
 
 .fav {
   --bs-btn-padding-y: .25rem !important;
-  --bs-btn-padding-x: .5rem !important;
+  --bs-btn-padding-x: .25rem !important;
   --bs-btn-font-size: .75rem !important;
-  --bs-btn-bg: rgb(167, 167, 167) !important;
-  --bs-btn-border-color: rgb(167, 167, 167) !important;
+  --bs-btn-bg: rgba(167, 167, 167, 0) !important;
+  --bs-btn-border-color: rgba(167, 167, 167, 0) !important;
   min-width: 26px !important;
+  line-height: 13px !important;
+}
+
+.btn-warning {
+  --bs-btn-color: rgb(167, 167, 167) !important;
+  --bs-btn-bg: #ffc107;
+  --bs-btn-border-color: #ffc107;
+  --bs-btn-hover-color: #fff !important;
+  --bs-btn-hover-bg: #ffca2c !important;
+  --bs-btn-hover-border-color: #ffc720;
+  --bs-btn-focus-shadow-rgb: 217,164,6;
+  --bs-btn-active-color: #ffc720 !important;
+  --bs-btn-active-bg: rgba(167, 167, 167, 0) !important;
+  --bs-btn-active-border-color: rgba(167, 167, 167, 0) !important;
+  --bs-btn-active-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.125);
+  --bs-btn-disabled-color: #000;
+  --bs-btn-disabled-bg: #ffc107;
+  --bs-btn-disabled-border-color: #ffc107;
 }
 
 .form-signin {
@@ -132,4 +152,74 @@ a.article-title:hover {
 
 .time-small {
   font-size: small;
+}
+
+.media-body {
+  position: relative;
+}
+
+
+.btn-padding-0 {
+  --bs-btn-padding-x: 0 !important;
+  --bs-btn-padding-y: 0 !important;
+  line-height: 20px !important;
+}
+
+.btn-padding {
+  --bs-btn-padding-x: 0.75rem !important;
+  --bs-btn-padding-y: 0.1875rem !important;
+}
+
+.btn-outline-danger-inverted {
+  --bs-btn-color: #fff !important;
+  --bs-btn-bg: #dc3545 !important;
+  --bs-btn-border-color: #dc3545 !important;
+  --bs-btn-hover-color: #dc3545 !important;
+  --bs-btn-hover-bg: #fff !important;
+  --bs-btn-hover-border-color: #dc3545 !important;
+  --bs-btn-focus-shadow-rgb: 220,53,69;
+  --bs-btn-active-color: #dc3545 !important;
+  --bs-btn-active-bg: #fff !important;
+  --bs-btn-active-border-color: #dc3545;
+  --bs-btn-active-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.125);
+  --bs-btn-disabled-color: #dc3545;
+  --bs-btn-disabled-bg: transparent;
+  --bs-gradient: none;
+}
+
+.btn-outline-success-inverted {
+  --bs-btn-color: #fff !important;
+  --bs-btn-bg: #198754 !important;
+  --bs-btn-border-color: #198754 !important;
+  --bs-btn-hover-color: #198754 !important;
+  --bs-btn-hover-bg: #fff !important;
+  --bs-btn-hover-border-color: #198754 !important;
+  --bs-btn-focus-shadow-rgb: 25, 135, 84;
+  --bs-btn-active-color: #198754 !important;
+  --bs-btn-active-bg: #fff !important;
+  --bs-btn-active-border-color: #198754;
+  --bs-btn-active-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.125);
+  --bs-btn-disabled-color: #198754;
+  --bs-btn-disabled-bg: transparent;
+  --bs-gradient: none;
+}
+
+.score {
+  z-index: 1000;
+  /* height: 20px; */
+  --bs-btn-disabled-bg: #fff !important;
+  min-width: 30px;
+  padding: 0px !important;
+}
+
+.btn-group>.btn-group:not(:first-child), .btn-group>.btn:not(:first-child) {
+  margin-left: -5px !important;
+}
+
+.btn {
+  --bs-btn-border-radius: 0.33rem !important;
+}
+
+.btn.disabled, .btn:disabled, fieldset:disabled .btn {
+  opacity: 1 !important;
 }

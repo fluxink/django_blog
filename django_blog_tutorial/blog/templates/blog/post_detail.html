@@ -32,26 +32,40 @@
                 <label class="me-2">{{ comment.user }}</label>
                 <span class="me-auto text-muted time-small">{{ comment.date }}</span>
                 <div class="align-self-end">
-                    <input type="radio" class="btn-check" name="comment-option{{ comment.id }}" id="like{{ comment.id }}" autocomplete="off"
-                        {% if user.is_authenticated %}
-                            {% for comment_r in comment_user_vote_list %}
-                            {{ comment_r.action }}
-                                {% if comment_r.comment.id == comment.id and comment_r.action == 'like' %}checked{% endif %}
-                            {% endfor %}
-                        {% endif %}>
-                        <label class="btn btn-success comment-vote" action="like" comment-id="{{ comment.id }}" for="like{{ comment.id }}">+</label>
-                        {% if comment.postcommentrating_set.first %}
-                            <span class="score" id="{{ comment.id }}-score">{{ comment.postcommentrating_set.first.get_rating }}</span>
-                        {% else %}
-                            <span class="score" id="{{ comment.id }}-score">0</span>
-                        {% endif %}
-                        <input type="radio" class="btn-check" name="comment-option{{ comment.id }}" id="dislike{{ comment.id }}" autocomplete="off"
-                        {% if user.is_authenticated %}
-                            {% for comment_r in comment_user_vote_list %}
-                                {% if comment_r.comment.id == comment.id and comment_r.action == 'dislike' %}checked{% endif %}
-                            {% endfor %}
-                        {% endif %}>
-                        <label class="btn btn-danger comment-vote" action="dislike" comment-id="{{ comment.id }}" for="dislike{{ comment.id }}">-</label>
+                    <div class="btn-group">
+                        <input type="radio" class="btn-check" name="comment-option{{ comment.id }}" id="like{{ comment.id }}" autocomplete="off"
+                            {% if user.is_authenticated %}
+                                {% for comment_r in comment_user_vote_list %}
+                                {{ comment_r.action }}
+                                    {% if comment_r.comment.id == comment.id and comment_r.action == 'like' %}checked{% endif %}
+                                {% endfor %}
+                            {% endif %}>
+                            <label class="btn btn-outline-success btn-outline-success-inverted btn-padding-0 comment-vote" action="like" comment-id="{{ comment.id }}" for="like{{ comment.id }}">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="1.5rem" height="1.5rem" fill="currentColor" class="bi bi-arrow-up-square-fill" viewBox="0 0 16 16">
+                                    <path d="M2 16a2 2 0 0 1-2-2V2a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H2zm6.5-4.5V5.707l2.146 2.147a.5.5 0 0 0 .708-.708l-3-3a.5.5 0 0 0-.708 0l-3 3a.5.5 0 1 0 .708.708L7.5 5.707V11.5a.5.5 0 0 0 1 0z"/>
+                                </svg>
+                            </label>
+                            {% if comment.postcommentrating_set.first %}
+                                <span class="btn btn-secondary btn-padding score fw-bold disabled
+                                {% if comment.postcommentrating_set.first.get_rating > 0 %}text-success 
+                                {% elif comment.postcommentrating_set.first.get_rating < 0 %}text-danger
+                                {% else %}text-muted
+                                {% endif %}" id="{{ comment.id }}-score">{{ comment.postcommentrating_set.first.get_rating }}</span>
+                            {% else %}
+                                <span class="btn btn-secondary btn-padding score fw-bold disabled text-muted" id="{{ comment.id }}-score">0</span>
+                            {% endif %}
+                            <input type="radio" class="btn-check" name="comment-option{{ comment.id }}" id="dislike{{ comment.id }}" autocomplete="off"
+                            {% if user.is_authenticated %}
+                                {% for comment_r in comment_user_vote_list %}
+                                    {% if comment_r.comment.id == comment.id and comment_r.action == 'dislike' %}checked{% endif %}
+                                {% endfor %}
+                            {% endif %}>
+                            <label class="btn btn-outline-danger btn-outline-danger-inverted btn-padding-0 comment-vote" action="dislike" comment-id="{{ comment.id }}" for="dislike{{ comment.id }}">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="1.5rem" height="1.5rem" fill="currentColor" class="bi bi-arrow-down-square-fill bi-arrow" viewBox="0 0 16 16">
+                                    <path d="M2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H2zm6.5 4.5v5.793l2.146-2.147a.5.5 0 0 1 .708.708l-3 3a.5.5 0 0 1-.708 0l-3-3a.5.5 0 1 1 .708-.708L7.5 10.293V4.5a.5.5 0 0 1 1 0z"></path>
+                                </svg>
+                            </label>
+                    </div>
                 </div>
             </div>
             <div class="card-body">
@@ -60,7 +74,7 @@
         </div>
         {% endfor %}
     </div>
-    {% if comments_count > 2 %}
+    {% if comments_count > 7 %}
     <nav aria-label="Page navigation example">
         <ul class="pagination">
         {% if post_comments.has_previous %}

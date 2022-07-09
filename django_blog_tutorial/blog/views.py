@@ -149,7 +149,7 @@ class PostDetailView(DetailView):
         try:
             comments = PostComment.objects.filter(post=self.get_object()).order_by('-date')
             comments_count = comments.count()
-            paginator = Paginator(comments, 2)
+            paginator = Paginator(comments, 7)
             page_number = self.request.GET.get('page')
             page_comments = paginator.get_page(page_number)
 
