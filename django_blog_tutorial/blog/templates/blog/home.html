@@ -7,7 +7,7 @@
                 <div class="d-flex flex-row">
                     <div class="d-flex flex-column justify-content-center me-auto">
                         <img class="rounded-circle article-img" src="{{ post.author.profile.image.url }}" alt="">
-                        <a class="text-decoration-none text-center" href="{% url 'user-posts' post.author.username %}">{{ post.author }}</a>
+                        <a class="text-decoration-none text-center" href="{% url 'user-profile' post.author.username %}">{{ post.author }}</a>
                     </div>
                     <div class="align-self-center">
                         <input type="checkbox" class="btn-check fav" id="btn-fav-{{ post.id }}" post_id="{{ post.id }}" autocomplete="off" {% if post_user_fav_list and post.id in post_user_fav_list %}checked{% endif %}>

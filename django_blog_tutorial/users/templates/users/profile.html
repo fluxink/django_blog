@@ -1,24 +1,93 @@
 {% extends 'blog/base.html' %}
-{% load crispy_forms_tags %}
+{% load tz %}
 {% block content %}
-    <div class="content-section">
-        <div class="media">
-        <img class="rounded-circle account-img" src="{{ user.profile.image.url }}">
-        <div class="media-body">
-            <h2 class="account-heading">{{ user.username }}</h2>
-            <p class="text-secondary">{{ user.email }}</p>
-        </div>
-        </div>
-        <form class="m-2" method="POST" enctype="multipart/form-data">
-            {% csrf_token %}
-            <fieldset class="form-group">
-                <legend class="border-bottom mb-4">Profile Info</legend>
-                {{ u_form|crispy }}
-                {{ p_form|crispy }}
-            </fieldset>
-            <div class="form-group">
-                <button class="btn btn-outline-info" type="submit">Update</button>
+    <div class="container">
+        <div class="card mb-3">
+            <div class="card-body">
+                <img class="rounded-circle account-img" src="{{ profile.image.url }}" alt="">
+                <h1>{{ profile.user.username }}</h1>
+                <div>Registered: {% with local=profile.user.date_joined|localtime %}<span>{{ local|date:'d-m-Y' }}</span>{% endwith %}</div>
+                <div>Last login: {% with local=profile.user.last_login|localtime %}<span>{{ local|date:'d-m-Y' }} at {{ local|date:'H:i' }}</span>{% endwith %}</div>
+                <div>Posts published: {{ count_of_posts }}</div>
+                <div>Comments: {{ count_of_comments }}</div>
             </div>
-        </form>
+        </div>
+        <div class="card mb-2">
+            <div class="card-header">
+                <ul class="nav nav-tabs card-header-tabs">
+                    <li class="nav-item">
+                      <a class="nav-link {% if display_object == 'posts' %}active" aria-current="true"{% endif %}" href="{% url 'user-profile' profile.user.username %}">Posts</a>
+                    </li>
+                    <li class="nav-item">
+                      <a class="nav-link {% if display_object == 'favs' %}active" aria-current="true"{% endif %}" href="?favs=1/">Favorites</a>
+                    </li>
+                </ul>
+            </div>
+            <div class="card-body">
+                {% for post in page_objects %}
+                <article class="media card mb-4 shadow">
+                    <div class="d-flex flex-column card-body">
+                        <h2 class="d-flex"><a class="article-title text-decoration-none" href="{% url 'post-detail' post.id %}">{{ post.title }}</a></h2>
+                        <div class="d-flex flex-row">
+                                <div class="me-auto">
+                                    <small class="text-muted">{{ post.date_posted|date:"j F, Y" }}</small>
+                                </div>
+                                <div class="align-self-center">
+                                    <input type="checkbox" class="btn-check fav" id="btn-fav-{{ post.id }}" post_id="{{ post.id }}" autocomplete="off" {% if post_user_fav_list and post.id in post_user_fav_list %}checked{% endif %}>
+                                    <label class="btn btn-warning fav me-2" for="btn-fav-{{ post.id }}">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-star-fill" viewBox="0 0 16 16">
+                                            <path d="M3.612 15.443c-.386.198-.824-.149-.746-.592l.83-4.73L.173 6.765c-.329-.314-.158-.888.283-.95l4.898-.696L7.538.792c.197-.39.73-.39.927 0l2.184 4.327 4.898.696c.441.062.612.636.282.95l-3.522 3.356.83 4.73c.078.443-.36.79-.746.592L8 13.187l-4.389 2.256z"/>
+                                        </svg>
+                                    </label>
+                                    <div class="btn-group">
+                                        {% if post.postrating_set.first %}
+                                            <span class="btn btn-secondary btn-padding score lh-lg fw-bold disabled 
+                                            {% if post.postrating_set.first.get_rating > 0 %}text-success 
+                                            {% elif post.postrating_set.first.get_rating < 0 %}text-danger
+                                            {% else %}text-muted
+                                            {% endif %}" id="{{ post.id }}_score">{{ post.postrating_set.first.get_rating }}</span>
+                                        {% else %}
+                                            <span class="btn btn-secondary btn-padding score lh-lg fw-bold disabled text-muted" id="{{ post.id }}_score">0</span>
+                                        {% endif %}
+                                    </div>
+                                </div>
+
+                        </div>
+                    </div>
+                </article>
+                {% endfor %}
+            </div>
+        </div>
+        {% if page_number > 1 %}
+            <nav aria-label="Page navigation example">
+                <ul class="pagination justify-content-center">
+                {% if page_objects.has_previous %}
+                    <li class="page-item"><a class="page-link" href="?page=1">First</a></li>
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ page_objects.previous_page_number }}" aria-label="Previous">
+                        <span aria-hidden="true">&laquo;</span>
+                        </a>
+                    </li>
+                {% endif %}
+
+                {% for num in page_objects.paginator.page_range %}
+                    {% if page_objects.number == num %}
+                    <li class="page-item active"><a class="page-link" href="?page={{ num }}">{{ num }}</a></li>
+                    {% elif num > page_objects.number|add:'-3' and num < page_objects.number|add:'3'%}
+                    <li class="page-item"><a class="page-link" href="?page={{ num }}">{{ num }}</a></li>
+                    {% endif %}
+                {% endfor %}
+
+                {% if page_objects.has_next %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ page_objects.next_page_number }}" aria-label="Next">
+                        <span aria-hidden="true">&raquo;</span>
+                        </a>
+                    </li>
+                    <li class="page-item"><a class="page-link" href="?page={{ page_objects.paginator.num_pages }}">Last</a></li>
+                {% endif %}
+                </ul>
+            </nav>
+        {% endif %}
     </div>
 {% endblock content %}
