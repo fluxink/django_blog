@@ -223,3 +223,8 @@ a.article-title:hover {
 .btn.disabled, .btn:disabled, fieldset:disabled .btn {
   opacity: 1 !important;
 }
+
+.nav-link-profile {
+  display: inline-block !important;
+  padding-left: 0px !important;
+}
