@@ -47,8 +47,8 @@
                     <img class="rounded-circle border comment-img" src="{{ user.profile.image.url }}" alt="">
                     <a class="nav-link nav-link-profile text-decoration-none dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">{{ user.username }}</a>
                     <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                      <li><a class="dropdown-item" href="{% url 'user-profile' user.username %}">Your profile</a></li>
                       <li><a class="dropdown-item" href="{% url 'profile-settings' %}">Settings</a></li>
-                      <li><a class="dropdown-item" href="#">Another action</a></li>
                       <li><hr class="dropdown-divider"></li>
                       <li><a class="dropdown-item" href="{% url 'logout' %}">Logout</a></li>
                     </ul>
