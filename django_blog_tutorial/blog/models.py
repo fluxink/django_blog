@@ -55,7 +55,7 @@ class PostComment(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     content = models.CharField(max_length=250)
     date = models.DateTimeField(auto_now_add=True)
-    # score = models.IntegerField(default=0)
+    score = models.IntegerField(default=0)
 
     def __str__(self):
         return f'{self.user} comment "{self.post}"'
@@ -73,6 +73,14 @@ class PostCommentRating(models.Model):
 
     def __str__(self):
         return f'{self.user} {self.action} comment-id: {self.comment.id}'
+
+    # def save(self, force_insert=None, force_update=None, using=None, update_fields=None):
+    #     super().save(using, force_insert, force_update, update_fields)
+    #     # PostComment.objects.filter(postcommentrating__comment=self.comment).update(score=self.get_rating())
+    #     self.comment.score=self.get_rating()
+    #     # comment_obj.update(score=self.get_rating())
+    #     return None
+    
 
     class Meta:
         constraints = [

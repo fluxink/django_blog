@@ -162,8 +162,10 @@ class PostDetailView(DetailView):
                 'comment_user_vote_list': comment_list
             })
 
+        ordering = self.request.GET.get('order', '-date')
+
         try:
-            comments = PostComment.objects.filter(post=self.get_object()).order_by('-date')
+            comments = PostComment.objects.filter(post=self.get_object()).order_by(ordering)
             comments_count = comments.count()
             paginator = Paginator(comments, 7)
             page_number = self.request.GET.get('page')

@@ -134,11 +134,13 @@ a.article-title:hover {
 }
 
 .comment {
-  background: #ffffff;
-  padding: 5px 16px;
-  border: 1px solid #dddddd;
-  border-radius: 3px;
-  margin-bottom: 10px;
+  --bs-card-spacer-x: 0.5rem !important;
+  border-left: 0px !important;
+  border-right: 0px !important;
+}
+
+.comment-header {
+  padding: 5px !important;
 }
 
 .comment-vote {
@@ -148,6 +150,15 @@ a.article-title:hover {
   --bs-btn-bg: rgb(167, 167, 167) !important;
   --bs-btn-border-color: rgb(167, 167, 167) !important;
   min-width: 26px !important;
+}
+
+.comment-section {
+  padding-left: 0px !important;
+  padding-right: 0px !important;
+}
+
+.comment-input {
+  height: 5rem !important;
 }
 
 .time-small {
@@ -205,7 +216,7 @@ a.article-title:hover {
 }
 
 .score {
-  z-index: 1000;
+  z-index: 5;
   /* height: 20px; */
   --bs-btn-disabled-bg: #fff !important;
   min-width: 30px;

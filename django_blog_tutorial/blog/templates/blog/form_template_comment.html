@@ -1,7 +1,7 @@
 {% load crispy_forms_utils %}
 
 {% specialspaceless %}
-{% if form_tag %}<form {{ flat_attrs }} method="{{ form_method|upper }}" class="d-grid gap-3" >{% endif %}
+{% if form_tag %}<form {{ flat_attrs }} method="{{ form_method|upper }}" class="d-grid gap-2 mt-2" >{% endif %}
     {% if form_method|lower == 'post' and not disable_csrf %}
         {% csrf_token %}
     {% endif %}

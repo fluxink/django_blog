@@ -7,9 +7,9 @@
     <div id="div_{{ field.auto_id }}" class="form-floating">
                 {% if field_class %}<div class="{{ field_class }}">{% endif %}
                     {% if field.errors %}
-                        {% crispy_field field 'class' 'form-control is-invalid' %}
+                        {% crispy_field field 'class' 'form-control comment-input is-invalid' %}
                     {% else %}
-                        {% crispy_field field 'class' 'form-control' %}
+                        {% crispy_field field 'class' 'form-control comment-input' %}
                     {% endif %}
                     {% if not field|is_file %}
                         {% include 'bootstrap5/layout/help_text_and_errors.html' %}
