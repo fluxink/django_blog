@@ -2,7 +2,7 @@ import os
 from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth.views import LoginView
+from django.contrib.auth.views import LoginView, LogoutView
 from django.contrib.auth.models import User
 from django.views.generic import DetailView
 from django.core.paginator import Paginator
@@ -14,6 +14,22 @@ from blog.models import Post, PostComment, PostFav
 class MyLoginView(LoginView):
 
     authentication_form = MyAuthenticationForm
+
+    # set cookie after login
+    def form_valid(self, form):
+        response = super().form_valid(form)
+        user_fav_list = Post.objects.filter(postfav__user=form.get_user(), postfav__fav=1).values_list('id', flat=True)
+
+        response.set_cookie('user_fav_list', list(user_fav_list))
+        return response
+
+
+class MyLogoutView(LogoutView):
+
+    def get(self, request, *args, **kwargs):
+        response = super().get(request, *args, **kwargs)
+        response.delete_cookie('user_fav_list')
+        return response
 
 
 def register(request):

@@ -79,17 +79,33 @@ def post_rate(request):
 def post_fav(request):
     if request.method == 'POST':
         user = request.user
+        # try:
+        #     # user_fav_list = request.COOKIES['user_fav_list'].replace('[', '').replace(']', '')
+        #     user_fav_list = request.COOKIES.get('user_fav_list')
+        #     print(user_fav_list, type(user_fav_list))
+        #     # user_fav_list = user_fav_list.split(', ')
+        #     # print(user_fav_list)
+        # except: user_fav_list = list()
+
         json_data = json.loads(request.body)
         if json_data['fav'] == 'True':
             fav = 1
         else: fav = 0
+
         post = json_data['post_id']
         post = Post.objects.get(pk=post)
+
+        user_fav_list = PostFav.objects.filter(user=user, fav=1).values_list('post', flat=True)
+
         if PostFav.objects.filter(user=user, post=post).exists():
             PostFav.objects.filter(user=user, post=post).update(fav=fav)
         else:
             PostFav.objects.create(user=user, post=post, fav=fav)
-        return HttpResponse(request, content_type='text/plain', headers={'content': 'Yay'})
+
+        response = HttpResponse(request, content_type='text/plain', headers={'content': 'Yay'})
+        response.set_cookie('user_fav_list', list(user_fav_list))
+
+        return response
 
 
 
