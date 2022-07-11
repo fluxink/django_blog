@@ -61,7 +61,7 @@
                 <h2><a class="article-title text-decoration-none" href="{% url 'post-detail' post.id %}">{{ post.title }}</a></h2>
                 <div class="article-content overflow-auto">
                     {% if post.content|safe|length > 550 %}
-                        {{ post.content|safe|slice:":551" }}...
+                        {{ post.content|safe|slice:":551" }} &ensp;...
                         <p>
                             <a class="btn btn-secondary btn-sm" href="{% url 'post-detail' post.id %}">Full post</a>
                         </p>
