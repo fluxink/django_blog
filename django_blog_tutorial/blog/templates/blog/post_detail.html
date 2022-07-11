@@ -10,6 +10,12 @@
                 <img class="rounded-circle article-img" src="{{ post.author.profile.image.url }}" alt="">
                 <a class="text-decoration-none stretched-link text-center" href="{% url 'user-profile' post.author.username %}">{{ post.author }}</a>
             </div>
+            {% if object.author == user %}
+            <div class="d-flex align-items-center me-3">
+                <a class="btn btn-secondary btn-sm mt-1 mb-1" href="{% url 'post-update' object.id %}">Update</a>
+                <a class="btn btn-danger btn-sm mt-1 mb-1" href="{% url 'post-delete' object.id %}">Delete</a>
+            </div>
+            {% endif %}
             <div class="d-flex flex-column justify-content-center">
                 <div>
                     <input type="checkbox" class="btn-check fav" id="btn-fav-{{ post.id }}" post_id="{{ post.id }}" autocomplete="off" {% if request.COOKIES.user_fav_list and post.id in request.COOKIES.user_fav_list|string_to_int_list %}checked{% endif %}>
