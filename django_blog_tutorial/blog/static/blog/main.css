@@ -42,6 +42,29 @@ ul {
   color: #444444;
 }
 
+/* p {
+  height: min-content;
+}
+
+@media only screen and (max-width: 768px) {
+  p > img {
+    object-fit:scale-down !important;
+    width: 600px!important;
+    max-height: min-content !important;
+  }
+} */
+
+.article-content img {
+  width: -webkit-fill-available; 
+  height: auto;
+}
+
+.article-content iframe {
+  width: -webkit-fill-available;
+  min-height: 288px; 
+  height: 40vh;
+}
+
 a.article-title:hover {
   color: #428bca;
   text-decoration: none;
