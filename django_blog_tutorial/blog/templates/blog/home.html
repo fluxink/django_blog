@@ -57,12 +57,14 @@
                     </div>
                 </div>
             </div>
-            <div class="card-body position-relative">
-                <h2><a class="article-title text-decoration-none stretched-link" href="{% url 'post-detail' post.id %}">{{ post.title }}</a></h2>
+            <div class="card-body">
+                <h2><a class="article-title text-decoration-none" href="{% url 'post-detail' post.id %}">{{ post.title }}</a></h2>
                 <div class="article-content">
                     {% if post.content|safe|length > 550 %}
-                        {{ post.content|safe|slice:":551" }}
-                        <a href="{% url 'post-detail' post.id %}">Read more...</a>
+                        {{ post.content|safe|slice:":551" }}...
+                        <p>
+                            <a class="btn btn-secondary btn-sm" href="{% url 'post-detail' post.id %}">Full post</a>
+                        </p>
                     {% else %}
                         {{ post.content|safe }}
                     {% endif %}
