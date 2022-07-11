@@ -1,5 +1,4 @@
 
-
 // return cookie by name or undefined
 function getCookie(name) {
     let matches = document.cookie.match(new RegExp(
@@ -10,27 +9,24 @@ function getCookie(name) {
 
 const csrftoken = getCookie('csrftoken')
 
-async function send_vote_request(method, request_url, body = null){
-    if (method == 'POST'){
-        return await fetch(request_url, {
-            method: method,
-            body: JSON.stringify(body),
-            headers: {
-                'Content-Type': 'application/json;charset=utf-8',
-                'X-CSRFToken': csrftoken
-            }
-        })
-    }
-    if (method == 'GET'){
-        let head = {
+async function send_post_request(request_url, body = null){
+    return await fetch(request_url, {
+        method: 'POST',
+        body: JSON.stringify(body),
+        headers: {
             'Content-Type': 'application/json;charset=utf-8',
             'X-CSRFToken': csrftoken
         }
-        head['post-id'] = body['post_id']
-        return await fetch(request_url, {
-            method: method,
-            headers: head
-        })
+    })
+}
+
+async function if_user_auth(func, ...args){
+    let is_auth = (document.querySelector('meta[name="usr-auth-check"]').content == 'True')
+    if (is_auth){
+       await func(...args)
+    }
+    else {
+        window.location.href = '/login/?next=' + window.location.pathname
     }
 }
 
@@ -39,9 +35,9 @@ async function comment_vote(element){
         'comment-id': element.getAttribute('comment-id'),
         'comment-action': element.getAttribute('action')
     }
-    response = await send_vote_request('POST', window.location.href, data)
+    response = await send_post_request(window.location.href, data)
     let score_elem = document.getElementById(data['comment-id'] + '-score')
-    score_elem.innerHTML = response.headers.get('comment-score')
+    score_elem.innerHTML = response.headers.get('comment-score') || score_elem.innerHTML
 }
 
 async function post_vote(element){
@@ -50,22 +46,12 @@ async function post_vote(element){
         action: element.getAttribute('action')
     }
     // send up/down vote
-    await send_vote_request('POST', vote_url, data)
+    response = await send_post_request(vote_url, data)
     let score_elem = document.getElementById(element.getAttribute('post_id') + '_score')
-    // get updated score
-    let post_score = await send_vote_request('GET', vote_url, data)
-    score_elem.innerHTML = post_score.headers.get('score')
+    // display updated score
+    score_elem.innerHTML = response.headers.get('score') || score_elem.innerHTML
 }
 
-async function if_user_auth(func, ...args){
-    let is_auth = (document.querySelector('meta[name="usr-auth-check"]').content == 'True')
-    if (is_auth){
-       await func(...args)
-    }
-    else{
-        window.location.href = '/login/?next=' + window.location.pathname
-    }
-}
 
 async function post_fav(element, is_favorit){
     let data = {
@@ -73,16 +59,31 @@ async function post_fav(element, is_favorit){
         fav: is_favorit
     }
     // send fav
-    await send_vote_request('POST', fav_url, data)
+    await send_post_request(fav_url, data)
 }
+
+function replaceUrlParam(url, paramName, paramValue)
+{
+    if (paramValue == null) {
+        paramValue = '';
+    }
+    var pattern = new RegExp('\\b('+paramName+'=).*?(&|#|$)');
+    if (url.search(pattern)>=0) {
+        return url.replace(pattern,'$1' + paramValue + '$2');
+    }
+    url = url.replace(/[?#]$/,'');
+    return url + (url.indexOf('?')>0 ? '&' : '?') + paramName + '=' + paramValue;
+}
+
 
 const vote_url = '/rate-post/'
 const fav_url = '/fav-post/'
 const vote_list = document.getElementsByClassName('vote')
 const fav_list = document.getElementsByClassName('fav')
 const comment_vote_list = document.getElementsByClassName('comment-vote')
+const page_links = document.getElementsByClassName('page-link')
 
-// add event for each vote button
+// add event for each button
 for (let elem of vote_list){
     elem.addEventListener('click', event => {
         if_user_auth(post_vote,elem)
@@ -102,4 +103,16 @@ for (let elem of comment_vote_list){
     elem.addEventListener('click', event => {
         if_user_auth(comment_vote, elem)
     })
+}
+for (let elem of page_links){
+    elem.addEventListener('click', event => {
+        window.location.href = replaceUrlParam(window.location.href, 'page', elem.getAttribute('value'))
+    })
+}
+
+var order = document.getElementById("selectOrdering");
+
+order.onchange = function() {
+    window.location.href = replaceUrlParam(window.location.href, 'order', order.value)
+    return false;
 }
