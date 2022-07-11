@@ -7,8 +7,8 @@
             <div class="card-body">
                 <img class="rounded-circle account-img" src="{{ profile.image.url }}" alt="">
                 <h1>{{ profile.user.username }}</h1>
-                <div>Registered: {% with local=profile.user.date_joined|localtime %}<span>{{ local|date:'d-m-Y' }}</span>{% endwith %}</div>
-                <div>Last login: {% with local=profile.user.last_login|localtime %}<span>{{ local|date:'d-m-Y' }} at {{ local|date:'H:i' }}</span>{% endwith %}</div>
+                <div>Registered: {% with local=profile.user.date_joined|localtime %}<span>{{ local|date:'d.m.Y' }}</span>{% endwith %}</div>
+                <div>Last login: {% with local=profile.user.last_login|localtime %}<span>{{ local|date:'d.m.Y' }} at {{ local|date:'H:i' }}</span>{% endwith %}</div>
                 <div>Posts published: {{ count_of_posts }}</div>
                 <div>Comments: {{ count_of_comments }}</div>
             </div>

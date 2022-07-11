@@ -22,6 +22,8 @@ from django.conf.urls.static import static
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('tinymce/', include('tinymce.urls')),
+
     path('', include('blog.urls')),
     path('register/', user_views.register, name='register'),
     path('login/', user_views.MyLoginView.as_view(template_name='users/login.html'), name='login'),

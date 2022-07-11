@@ -1,5 +1,8 @@
 {% extends 'blog/base.html' %}
 {% load crispy_forms_tags %}
+{% block head %}
+    {{ form.media }}
+{% endblock head %}
 {% block content %}
 <div class="content-section">
     <form class="m-2" method="POST">

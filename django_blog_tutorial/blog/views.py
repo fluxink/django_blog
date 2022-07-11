@@ -9,7 +9,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
 from .models import Post, PostCommentRating, PostRating, PostFav, PostComment
-from .forms import CommentCreateForm
+from .forms import CommentCreateForm, PostCreateForm
 import json
 
 
@@ -209,7 +209,9 @@ class PostDetailView(DetailView):
 
 class PostCreateView(LoginRequiredMixin, SuccessMessageMixin, CreateView):
     model = Post
-    fields = ['title', 'content']
+    # fields = ['title', 'content']
+
+    form_class = PostCreateForm
 
     success_message = "Post was published"
     
