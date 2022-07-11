@@ -59,7 +59,7 @@
             </div>
             <div class="card-body">
                 <h2><a class="article-title text-decoration-none" href="{% url 'post-detail' post.id %}">{{ post.title }}</a></h2>
-                <div class="article-content">
+                <div class="article-content overflow-auto">
                     {% if post.content|safe|length > 550 %}
                         {{ post.content|safe|slice:":551" }}...
                         <p>
