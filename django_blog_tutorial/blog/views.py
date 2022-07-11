@@ -35,22 +35,19 @@ class PostListView(ListView):
     model = Post
     template_name = 'blog/home.html' # <app>/<model>_<viewtype>.html as default
     context_object_name = 'posts' # <model>_list as default
-    ordering = ['-date_posted']
+    # ordering = ['-date_posted']
     paginate_by = 5
 
+    def get_ordering(self):
+        ordering = [self.request.GET.get('order', '-date_posted')]
+        return ordering
+
     def get_context_data(self, **kwargs):
+        
         context = super(PostListView, self).get_context_data(**kwargs)
-        if self.request.user.is_authenticated:
-            post_user_vote_list = PostRating.objects.filter(user=self.request.user)
-            post_user_fav_list = PostFav.objects.filter(user=self.request.user, fav=1).values_list('post', flat=True)
-        else:
-            post_user_vote_list = None
-            post_user_fav_list = None
 
         context.update({
             'posts_rating_list': PostRating.objects.all(),
-            'post_user_vote_list': post_user_vote_list,
-            'post_user_fav_list': post_user_fav_list
         })
         return context
 
@@ -63,16 +60,24 @@ def post_rate(request):
         action = json_data['action']
         post = json_data['post_id']
         post = Post.objects.get(pk=post)
-        if PostRating.objects.filter(user=user, post=post).exists():
-            PostRating.objects.filter(user=user, post=post).update(action=action)
-        else:
-            PostRating.objects.create(user=user, post=post, action=action)
-        return HttpResponse(request, content_type='text/plain', headers={'content': 'Yay'})
-    if request.method == 'GET':
-        post_id = request.headers['post-id']
-        post = Post.objects.get(id=post_id)
-        score = PostRating.objects.filter(post=post).first().get_rating()
-        return HttpResponse(request, content_type='text/plain', headers={'score': score})
+        post_r = PostRating.objects.update_or_create(user=user, post=post, defaults={'action': action})
+
+        response = HttpResponse(request, content_type='text/plain', headers={'content': 'Yay'})
+
+        user_like_list = PostRating.objects.filter(user=user, action='like').values_list('post', flat=True)
+        response.set_cookie('user_like_list', list(user_like_list))
+
+        user_dislike_list = PostRating.objects.filter(user=user, action='dislike').values_list('post', flat=True)
+        response.set_cookie('user_dislike_list', list(user_dislike_list))
+
+        response.headers['score'] = post_r[0].get_rating()
+
+        return response
+    # if request.method == 'GET':
+    #     post_id = request.headers['post-id']
+    #     post = Post.objects.get(id=post_id)
+    #     score = PostRating.objects.filter(post=post).first().get_rating()
+    #     return HttpResponse(request, content_type='text/plain', headers={'score': score})
 
 
 @login_required
@@ -95,12 +100,9 @@ def post_fav(request):
         post = json_data['post_id']
         post = Post.objects.get(pk=post)
 
-        user_fav_list = PostFav.objects.filter(user=user, fav=1).values_list('post', flat=True)
+        PostFav.objects.update_or_create(user=user, post=post, defaults={'fav': fav})
 
-        if PostFav.objects.filter(user=user, post=post).exists():
-            PostFav.objects.filter(user=user, post=post).update(fav=fav)
-        else:
-            PostFav.objects.create(user=user, post=post, fav=fav)
+        user_fav_list = PostFav.objects.filter(user=user, fav=1).values_list('post', flat=True)
 
         response = HttpResponse(request, content_type='text/plain', headers={'content': 'Yay'})
         response.set_cookie('user_fav_list', list(user_fav_list))

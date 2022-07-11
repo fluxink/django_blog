@@ -19,10 +19,8 @@
                             </label>
                             <div class="btn-group">
                                 <input type="radio" class="btn-check" name="post-option{{ post.id }}" id="like{{ post.id }}" autocomplete="off"
-                                {% if user.is_authenticated %}
-                                    {% for post_r in post_user_vote_list %}
-                                        {% if post_r.post.id == post.id and post_r.action == 'like' %}checked{% endif %}
-                                    {% endfor %}
+                                {% if user.is_authenticated and post.id in request.COOKIES.user_like_list|string_to_int_list %}
+                                    checked
                                 {% endif %}>
                                 <label class="btn btn-outline-success btn-outline-success-inverted btn-padding-0 vote" action="like" post_id="{{ post.id }}" for="like{{ post.id }}">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="2rem" height="2rem" fill="currentColor" class="bi bi-arrow-up-square-fill" viewBox="0 0 16 16">
@@ -39,10 +37,8 @@
                                     <span class="btn btn-secondary btn-padding score lh-lg fw-bold disabled text-muted" id="{{ post.id }}_score">0</span>
                                 {% endif %}
                                 <input type="radio" class="btn-check" name="post-option{{ post.id }}" id="dislike{{ post.id }}" autocomplete="off"
-                                {% if user.is_authenticated %}
-                                    {% for post_r in post_user_vote_list %}
-                                        {% if post_r.post.id == post.id and post_r.action == 'dislike' %}checked{% endif %}
-                                    {% endfor %}
+                                {% if user.is_authenticated and post.id in request.COOKIES.user_dislike_list|string_to_int_list %}
+                                    checked
                                 {% endif %}>
                                 <label class="btn btn-outline-danger btn-outline-danger-inverted btn-padding-0 vote" action="dislike" post_id="{{ post.id }}" for="dislike{{ post.id }}">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="2rem" height="2rem" fill="currentColor" class="bi bi-arrow-down-square-fill bi-arrow" viewBox="0 0 16 16">
@@ -85,9 +81,9 @@
     <nav aria-label="Page navigation example">
         <ul class="pagination">
         {% if page_obj.has_previous %}
-            <li class="page-item"><a class="page-link" href="?page=1">First</a></li>
+            <li class="page-item"><a class="page-link" href="#" value="1">First</a></li>
             <li class="page-item">
-                <a class="page-link" href="?page={{ page_obj.previous_page_number }}" aria-label="Previous">
+                <a class="page-link" href="#" value="{{ page_obj.previous_page_number }}" aria-label="Previous">
                   <span aria-hidden="true">&laquo;</span>
                 </a>
               </li>
@@ -95,21 +91,43 @@
 
         {% for num in page_obj.paginator.page_range %}
             {% if page_obj.number == num %}
-            <li class="page-item active"><a class="page-link" href="?page={{ num }}">{{ num }}</a></li>
+            <li class="page-item active"><a class="page-link" href="#" value="{{ num }}">{{ num }}</a></li>
             {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3'%}
-            <li class="page-item"><a class="page-link" href="?page={{ num }}">{{ num }}</a></li>
+            <li class="page-item"><a class="page-link" href="#" value="{{ num }}">{{ num }}</a></li>
             {% endif %}
         {% endfor %}
 
         {% if page_obj.has_next %}
             <li class="page-item">
-                <a class="page-link" href="?page={{ page_obj.next_page_number }}" aria-label="Next">
+                <a class="page-link" href="#" value="{{ page_obj.next_page_number }}" aria-label="Next">
                   <span aria-hidden="true">&raquo;</span>
                 </a>
               </li>
-            <li class="page-item"><a class="page-link" href="?page={{ page_obj.paginator.num_pages }}">Last</a></li>
+            <li class="page-item"><a class="page-link" href="#" value="{{ page_obj.paginator.num_pages }}">Last</a></li>
         {% endif %}
         </ul>
     </nav>
     {% endif %}
 {% endblock content %}
+{% block sidebar %}
+    <li class="list-group-item list-group-item-light">
+        <div class="dropdown">
+            <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownOrdering" data-bs-toggle="dropdown" aria-expanded="false">
+            Ordering
+            </button>
+            <ul class="dropdown-menu" aria-labelledby="dropdownOrdering">
+            <li><a class="dropdown-item" href="?order=-date_posted">New first</a></li>
+            <li><a class="dropdown-item" href="?order=date_posted">Old first</a></li>
+            <li><a class="dropdown-item" href="?order=score">Score asc</a></li>
+            <li><a class="dropdown-item" href="?order=-score">Score desc</a></li>
+            </ul>
+        </div>
+        <select class="form-select" id="selectOrdering" aria-label="Ordering select">
+            <option selected>Ordering</option>
+            <option value="-date_posted">New first</option>
+            <option value="date_posted">Old first</option>
+            <option value="score">Score asc</option>
+            <option value="-score">Score desc</option>
+          </select>
+    </li>
+{% endblock sidebar %}

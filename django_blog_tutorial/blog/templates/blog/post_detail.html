@@ -26,10 +26,8 @@
                     </label>
                     <div class="btn-group">
                         <input type="radio" class="btn-check" name="post-option{{ post.id }}" id="like{{ post.id }}" autocomplete="off"
-                        {% if user.is_authenticated %}
-                            {% for post_r in post_user_vote_list %}
-                                {% if post_r.post.id == post.id and post_r.action == 'like' %}checked{% endif %}
-                            {% endfor %}
+                        {% if user.is_authenticated and post.id in request.COOKIES.user_like_list|string_to_int_list %}
+                            checked
                         {% endif %}>
                         <label class="btn btn-outline-success btn-outline-success-inverted btn-padding-0 vote" action="like" post_id="{{ post.id }}" for="like{{ post.id }}">
                             <svg xmlns="http://www.w3.org/2000/svg" width="2rem" height="2rem" fill="currentColor" class="bi bi-arrow-up-square-fill" viewBox="0 0 16 16">
@@ -46,10 +44,8 @@
                             <span class="btn btn-secondary btn-padding score lh-lg fw-bold disabled text-muted" id="{{ post.id }}_score">0</span>
                         {% endif %}
                         <input type="radio" class="btn-check" name="post-option{{ post.id }}" id="dislike{{ post.id }}" autocomplete="off"
-                        {% if user.is_authenticated %}
-                            {% for post_r in post_user_vote_list %}
-                                {% if post_r.post.id == post.id and post_r.action == 'dislike' %}checked{% endif %}
-                            {% endfor %}
+                        {% if user.is_authenticated and post.id in request.COOKIES.user_dislike_list|string_to_int_list %}
+                            checked
                         {% endif %}>
                         <label class="btn btn-outline-danger btn-outline-danger-inverted btn-padding-0 vote" action="dislike" post_id="{{ post.id }}" for="dislike{{ post.id }}">
                             <svg xmlns="http://www.w3.org/2000/svg" width="2rem" height="2rem" fill="currentColor" class="bi bi-arrow-down-square-fill bi-arrow" viewBox="0 0 16 16">
@@ -93,7 +89,7 @@
                   <li><a class="dropdown-item" href="?order=score">Score asc</a></li>
                   <li><a class="dropdown-item" href="?order=-score">Score desc</a></li>
                 </ul>
-              </div>
+            </div>
         </div>
         <div class="">
                 {% for comment in post_comments %}
