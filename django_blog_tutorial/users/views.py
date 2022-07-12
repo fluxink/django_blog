@@ -19,8 +19,8 @@ class MyLoginView(LoginView):
     def form_valid(self, form):
         response = super().form_valid(form)
         user_fav_list = Post.objects.filter(postfav__user=form.get_user(), postfav__fav=1).values_list('id', flat=True)
-        user_like_list = PostRating.objects.filter(user=user, action='like').values_list('post', flat=True)
-        user_dislike_list = PostRating.objects.filter(user=user, action='dislike').values_list('post', flat=True)
+        user_like_list = PostRating.objects.filter(user=form.get_user(), action='like').values_list('post', flat=True)
+        user_dislike_list = PostRating.objects.filter(user=form.get_user(), action='dislike').values_list('post', flat=True)
 
         response.set_cookie('user_fav_list', list(user_fav_list))
         response.set_cookie('user_like_list', list(user_like_list))
