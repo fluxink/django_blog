@@ -111,19 +111,8 @@
 {% endblock content %}
 {% block sidebar %}
     <li class="list-group-item list-group-item-light">
-        <div class="dropdown">
-            <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownOrdering" data-bs-toggle="dropdown" aria-expanded="false">
-            Ordering
-            </button>
-            <ul class="dropdown-menu" aria-labelledby="dropdownOrdering">
-            <li><a class="dropdown-item" href="?order=-date_posted">New first</a></li>
-            <li><a class="dropdown-item" href="?order=date_posted">Old first</a></li>
-            <li><a class="dropdown-item" href="?order=score">Score asc</a></li>
-            <li><a class="dropdown-item" href="?order=-score">Score desc</a></li>
-            </ul>
-        </div>
-        <select class="form-select" id="selectOrdering" aria-label="Ordering select">
-            <option selected>Ordering</option>
+        <select class="form-select btn btn-secondary" id="selectOrdering" aria-label="Ordering select">
+            <option selected>Sorting</option>
             <option value="-date_posted">New first</option>
             <option value="date_posted">Old first</option>
             <option value="score">Score asc</option>
