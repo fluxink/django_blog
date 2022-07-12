@@ -36,10 +36,10 @@
                         </label>
                         {% if post.postrating_set.first %}
                             <span class="btn btn-secondary btn-padding score lh-lg fw-bold disabled 
-                            {% if post.postrating_set.first.get_rating > 0 %}text-success 
-                            {% elif post.postrating_set.first.get_rating < 0 %}text-danger
+                            {% if post.score > 0 %}text-success 
+                            {% elif post.score < 0 %}text-danger
                             {% else %}text-muted
-                            {% endif %}" id="{{ post.id }}_score">{{ post.postrating_set.first.get_rating }}</span>
+                            {% endif %}" id="{{ post.id }}_score">{{ post.score }}</span>
                         {% else %}
                             <span class="btn btn-secondary btn-padding score lh-lg fw-bold disabled text-muted" id="{{ post.id }}_score">0</span>
                         {% endif %}
@@ -121,10 +121,10 @@
                                 </label>
                                 {% if comment.postcommentrating_set.first %}
                                     <span class="btn btn-secondary btn-padding score fw-bold disabled
-                                    {% if comment.postcommentrating_set.first.get_rating > 0 %}text-success 
-                                    {% elif comment.postcommentrating_set.first.get_rating < 0 %}text-danger
+                                    {% if comment.score > 0 %}text-success 
+                                    {% elif comment.score < 0 %}text-danger
                                     {% else %}text-muted
-                                    {% endif %}" id="{{ comment.id }}-score">{{ comment.postcommentrating_set.first.get_rating }}</span>
+                                    {% endif %}" id="{{ comment.id }}-score">{{ comment.score }}</span>
                                 {% else %}
                                     <span class="btn btn-secondary btn-padding score fw-bold disabled text-muted" id="{{ comment.id }}-score">0</span>
                                 {% endif %}

@@ -46,9 +46,9 @@ class PostListView(ListView):
         
         context = super(PostListView, self).get_context_data(**kwargs)
 
-        context.update({
-            'posts_rating_list': PostRating.objects.all(),
-        })
+        # context.update({
+        #     'posts_rating_list': PostRating.objects.all(),
+        # })
         return context
 
 
