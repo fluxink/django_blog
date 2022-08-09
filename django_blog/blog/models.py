@@ -24,6 +24,11 @@ class PostRating(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     action = models.CharField(max_length=20)
 
+    def get_rating(self):
+        likes = PostRating.objects.filter(post=self.post, action='like').count()
+        dislikes = PostRating.objects.filter(post=self.post, action='dislike').count()
+        return likes - dislikes
+
     def __str__(self):
         return f'{self.user} {self.action} {self.post}'
 
@@ -53,6 +58,11 @@ class PostComment(models.Model):
     content = models.CharField(max_length=250)
     date = models.DateTimeField(auto_now_add=True)
     score = models.IntegerField(default=0)
+
+    def get_rating(self):
+        likes = PostCommentRating.objects.filter(comment=self.comment, action='like').count()
+        dislikes = PostCommentRating.objects.filter(comment=self.comment, action='dislike').count()
+        return likes - dislikes
 
     def __str__(self):
         return f'{self.user} comment "{self.post}"'
