@@ -21,21 +21,10 @@ def home(request):
     return render(request, 'blog/home.html', context)
 
 
-class PostRateView(LoginRequiredMixin, SingleObjectMixin, View):
-    model = PostRating
-
-    def get_object(self, queryset):
-        post_rating_obj = super().get_object(queryset)
-        return 
-        
-
-
-
 class PostListView(ListView):
     model = Post
     template_name = 'blog/home.html' # <app>/<model>_<viewtype>.html as default
     context_object_name = 'posts' # <model>_list as default
-    # ordering = ['-date_posted']
     paginate_by = 5
 
     def get_ordering(self):
@@ -46,9 +35,6 @@ class PostListView(ListView):
         
         context = super(PostListView, self).get_context_data(**kwargs)
 
-        # context.update({
-        #     'posts_rating_list': PostRating.objects.all(),
-        # })
         return context
 
 
@@ -73,24 +59,12 @@ def post_rate(request):
         response.headers['score'] = post_r[0].get_rating()
 
         return response
-    # if request.method == 'GET':
-    #     post_id = request.headers['post-id']
-    #     post = Post.objects.get(id=post_id)
-    #     score = PostRating.objects.filter(post=post).first().get_rating()
-    #     return HttpResponse(request, content_type='text/plain', headers={'score': score})
 
 
 @login_required
 def post_fav(request):
     if request.method == 'POST':
         user = request.user
-        # try:
-        #     # user_fav_list = request.COOKIES['user_fav_list'].replace('[', '').replace(']', '')
-        #     user_fav_list = request.COOKIES.get('user_fav_list')
-        #     print(user_fav_list, type(user_fav_list))
-        #     # user_fav_list = user_fav_list.split(', ')
-        #     # print(user_fav_list)
-        # except: user_fav_list = list()
 
         json_data = json.loads(request.body)
         if json_data['fav'] == 'True':
@@ -123,29 +97,6 @@ class UserPostListView(ListView):
         return Post.objects.filter(author=user).order_by('-date_posted')
 
 
-# class PostCommentListView(ListView):
-#     model = PostComment
-#     template_name = 'blog/post_detail_comment_list.html'
-#     context_object_name = 'comments'
-#     ordering = ['-date']
-#     paginate_by = 7
-
-#     def get_context_data(self, **kwargs):
-#         context = super().get_context_data(**kwargs)
-
-#         if self.request.user.is_authenticated:
-#             try:
-#                 # comment_list = PostCommentRating.objects.filter(user=self.request.user, post=self.get_object())
-#                 comment_list = PostCommentRating.objects.filter(comment__post=Post.objects.get(pk=self.kwargs.get('pk')), user=self.request.user)
-#             except:
-#                 comment_list = None
-
-#             context.update({
-#                 'form': CommentCreateForm(),
-#                 'comment_user_vote_list': comment_list
-#             })
-
-
 class PostDetailView(DetailView):
     model = Post
 
@@ -154,7 +105,6 @@ class PostDetailView(DetailView):
 
         if self.request.user.is_authenticated:
             try:
-                # comment_list = PostCommentRating.objects.filter(user=self.request.user, post=self.get_object())
                 comment_list = PostCommentRating.objects.filter(comment__post=self.get_object(), user=self.request.user)
             except:
                 comment_list = None
@@ -199,22 +149,12 @@ class PostDetailView(DetailView):
                 
                 comment_object = PostCommentRating.objects.update_or_create(comment=comment, user=request.user, defaults={'action': action})
 
-                # if PostCommentRating.objects.filter(comment=comment, user=request.user).exists():
-                #    comment_object = PostCommentRating.objects.filter(comment=comment, user=request.user)
-                #    comment_object.update(action=action)
-                # else:
-                #    comment_object = PostCommentRating.objects.create(comment=comment, user=request.user, action=action)
-                #    comment_object.save()
-
                 return HttpResponse(request, content_type='text/plain', headers={'comment-score': comment_object[0].get_rating()})
 
 
 class PostCreateView(LoginRequiredMixin, SuccessMessageMixin, CreateView):
     model = Post
-    # fields = ['title', 'content']
-
     form_class = PostCreateForm
-
     success_message = "Post was published"
     
     def form_valid(self, form):
@@ -225,7 +165,6 @@ class PostCreateView(LoginRequiredMixin, SuccessMessageMixin, CreateView):
 class PostUpdateView(LoginRequiredMixin, UserPassesTestMixin, SuccessMessageMixin, UpdateView):
     model = Post
     fields = ['title', 'content']
-
     success_message = 'Post was updated'
     
     def form_valid(self, form):
@@ -241,9 +180,7 @@ class PostUpdateView(LoginRequiredMixin, UserPassesTestMixin, SuccessMessageMixi
 
 class PostDeleteView(LoginRequiredMixin, UserPassesTestMixin, SuccessMessageMixin, DeleteView):
     model = Post
-
     success_message = 'Post was deleted successfully'
-
     success_url = '/'
 
     def test_func(self):

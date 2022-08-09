@@ -4,18 +4,14 @@ from .views import (
     PostDetailView,
     PostCreateView,
     PostUpdateView, 
-    PostDeleteView,
-    UserPostListView,
-    PostRateView
+    PostDeleteView
 )
 from . import views
 
 urlpatterns = [
     path('', PostListView.as_view(), name='blog-home'),
-    # path('user/<str:username>', UserPostListView.as_view(), name='user-posts'),
     path('post/<int:pk>/', PostDetailView.as_view(), name='post-detail'),
 
-    # path('post/<slug:post>/<slug:action>/', PostRateView.as_view(), name='post-rate'),
     path('rate-post/', views.post_rate, name='post-rate'),
     path('fav-post/', views.post_fav, name='post-fav'),
 

@@ -24,11 +24,6 @@ class PostRating(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     action = models.CharField(max_length=20)
 
-    def get_rating(self):
-        likes = PostRating.objects.filter(post=self.post, action='like').count()
-        dislikes = PostRating.objects.filter(post=self.post, action='dislike').count()
-        return likes - dislikes
-
     def __str__(self):
         return f'{self.user} {self.action} {self.post}'
 
@@ -68,14 +63,8 @@ class PostCommentRating(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     action = models.CharField(max_length=20)
 
-    def get_rating(self):
-        likes = PostCommentRating.objects.filter(comment=self.comment, action='like').count()
-        dislikes = PostCommentRating.objects.filter(comment=self.comment, action='dislike').count()
-        return likes - dislikes
-
     def __str__(self):
         return f'{self.user} {self.action} comment-id: {self.comment.id}'
-
 
     class Meta:
         constraints = [
