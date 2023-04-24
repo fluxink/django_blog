@@ -16,4 +16,4 @@ Packages using:
 - Ordering
 - Pagination
 
-You can checkout how it looks [here](http://fluxink.pythonanywhere.com/)
+~~You can checkout how it looks [here](http://fluxink.pythonanywhere.com/)~~
